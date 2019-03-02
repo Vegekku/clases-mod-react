@@ -1,0 +1,12 @@
+.author {
+  text-align: center;
+}
+
+.author__pic {
+  display: inline-block;
+  border-radius: 100%;
+}
+
+.author__name {
+  font-size: 1em;
+}

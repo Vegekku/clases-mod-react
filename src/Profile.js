@@ -1,6 +1,5 @@
 import React from 'react'
 import Author from './js/Author'
-import Post from './js/Post'
 import AddPost from './js/AddPost'
 
 import './css/Profile.css'
@@ -25,20 +24,16 @@ class Profile extends React.Component {
   render() {
     return (
       <div className='profile'>
-        <Author details={SAMPLE_AUTHOR} />
-        <button onClick={this.showForm}>Add post</button>
-        {
-          this.state.showingForm && <AddPost onCancel={this.hideForm} onSubmit={this.addPost.bind(this)}/>
-        }
-        <ul className='posts'>
+        <Author details={{
+          ...SAMPLE_AUTHOR,
+          posts: this.state.posts,
+          following: true
+        }}>
+          <button onClick={this.showForm}>Add post</button>
           {
-            this.state.posts.map(post =>
-              <li key={post.date.valueOf()} className='posts__post'>
-                <Post title={post.title} date={post.date}>{post.content}</Post>
-              </li>
-            )
+            this.state.showingForm && <AddPost onCancel={this.hideForm} onSubmit={this.addPost.bind(this)}/>
           }
-        </ul>
+        </Author>
       </div>
     )
   }

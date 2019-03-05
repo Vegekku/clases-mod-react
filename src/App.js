@@ -1,8 +1,9 @@
 import React from 'react'
-// import Authors from './Authors'
-// import Profile from './Profile'
-// import Login from './Login'
-// import AuthorProfile from './AuthorProfile'
-import Requests from './Requests'
+import { BrowserRouter } from 'react-router-dom'
 
-export default () => <Requests />
+import SocialWriters from './SocialWriters';
+
+export default () =>
+  <BrowserRouter>
+    <SocialWriters />
+  </BrowserRouter>

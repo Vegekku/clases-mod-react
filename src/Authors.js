@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom'
 import './App.css';
 
 import Showcase from './js/Showcase'
@@ -38,7 +39,11 @@ class Authors extends React.Component {
     }
 
     return (
-      <Showcase keyFn={author => author.login.uuid} items={authors} render={author => <Author details={author} />} />
+      <Showcase keyFn={author => author.login.uuid} items={authors} render={author =>
+        <Link to={`/profile/${author.login.uuid}`} >
+          <Author details={author} />
+        </Link>
+      } />
     );
   }
 }

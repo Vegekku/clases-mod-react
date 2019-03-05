@@ -1,0 +1,21 @@
+.menu {
+  padding: 1rem;
+  display: inline-block;
+  background-color: azure;
+}
+.menu__link {
+  text-decoration: none;
+}
+.menu__link--active {
+  color: red;
+}
+.menu__options {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+}
+.menu__option {
+  cursor: pointer;
+  padding: 1rem;
+}

@@ -6,7 +6,8 @@ class Login extends React.Component {
   state = {user: '', password: ''}
   render() {
     // terms no está en state, por lo que es undefined. Al renderizar se convierte a false
-    const {user, password, terms, error, hasChange, loginError} = this.state
+    // const {user, password, terms, error, hasChange, loginError} = this.state
+    const {user, password, error, hasChange, loginError} = this.state
 
     return (
       <form onSubmit={this.login}>

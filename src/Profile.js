@@ -8,7 +8,6 @@ class Profile extends React.Component {
   state = {showingForm: false, posts: [], loading: true}
   componentDidMount () {
     const details = JSON.parse(localStorage.getItem('user'))
-    // TODO esto falla, revisar su código
     const posts = (JSON.parse(localStorage.getItem('posts')) || {})[details.login.uuid] || []
 
     this.setState({
@@ -37,13 +36,12 @@ class Profile extends React.Component {
     )
   }
   componentDidUpdate (previousProps, previousState) {
-    // TODO esto falla, revisar su código
-    const posts = (JSON.parse(localStorage.getItem('posts')) || [])
+    const posts = JSON.parse(localStorage.getItem('posts')) || {}
     posts[this.state.details.login.uuid] = this.state.posts
-    // localStorage.setItem(
-    //   'posts',
-    //   JSON.stringify(posts)
-    // )
+    localStorage.setItem(
+      'posts',
+      JSON.stringify(posts)
+    )
     // debugger
   }
   showForm = () => {
@@ -54,6 +52,8 @@ class Profile extends React.Component {
   }
   addPost = post => {
     post.date = new Date()
+    // setState debe devolver exactamente lo que va a cambiar
+    // para este caso podría obviarse el primer ...previousState, ya que este no cambia, solo cambia posts
     this.setState(previousState => {
       return {
         ...previousState,

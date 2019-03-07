@@ -19,13 +19,19 @@ class AuthorProfile extends React.Component {
           author.login.uuid === this.props.match.params.uuid
         )
       )
-      .then(details => this.setState({ details, loading: false }))
+      .then(details => this.setState({ details }))
+      .catch(error => this.setState({errorLoading: error}))
+      .finally(() => this.setState({loading: false}))
   }
   render() {
-    const {following, details, loading} = this.state
+    const {following, details, loading, errorLoading} = this.state
 
     if (loading) {
       return <p>Loading...</p>
+    }
+
+    if (errorLoading) {
+      return <p>Error 500!!!</p>
     }
 
     return (

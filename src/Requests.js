@@ -17,12 +17,14 @@ const USERS_URL = 'https://randomuser.me/api?seed=abc&results=100'
 class Requests extends React.Component {
   state = {loading: true}
   async componentDidMount() {
+    // TODO TryCatch para error 500
     const response = await fetch(USERS_URL)
     const { results: authors } = await response.json()
+    const loggedUser = JSON.parse(localStorage.getItem('user'))
     const requests = (JSON.parse(
       localStorage.getItem('requests')
     ) || {}
-    )['1cd1e622-12bb-4b35-a2c9-63ff7bda6c73'] || []
+    )[loggedUser.login.uuid] || []
     const authorsRequesting = requests.map(uuid =>
       authors.find(author => author.login.uuid === uuid)
     )
@@ -32,6 +34,7 @@ class Requests extends React.Component {
     if (this.state.loading) {
       return <p>Loading...</p>
     }
+    // TODO Controlar error 500
     return (
       // <RequestsUI requests={this.state.requests} onAccept={this.accept} onDecline={this.decline} />
       <Showcase items={this.state.requests} keyFn={author => author.login.uuid} render={author =>
@@ -45,19 +48,33 @@ class Requests extends React.Component {
   accept = author =>  {
     const followers = JSON.parse(localStorage.getItem('followers')) || {}
     const loggedUser = JSON.parse(localStorage.getItem('user'))
-    const currentFollowers = followers[loggedUser.login.uuid]
+    const currentFollowers = followers[loggedUser.login.uuid] || []
     followers[loggedUser.login.uuid] = [
       ...currentFollowers,
       author.login.uuid
     ]
     localStorage.setItem('followers', JSON.stringify(followers))
+    this._removeRequest(author)
   }
   decline = author => {
-    const followers = JSON.parse(localStorage.getItem('followers')) || {}
+    this._removeRequest(author)
+    // const followers = JSON.parse(localStorage.getItem('followers')) || {}
+    // const loggedUser = JSON.parse(localStorage.getItem('user'))
+    // const currentFollowers = followers[loggedUser.login.uuid] || []
+    // followers[loggedUser.login.uuid] = currentFollowers.filter(uuid => uuid !== author.login.uuid)
+    // localStorage.setItem('followers', JSON.stringify(followers))
+  }
+  _removeRequest = author => {
+    const requests = (JSON.parse(localStorage.getItem('requests'))) || {}
     const loggedUser = JSON.parse(localStorage.getItem('user'))
-    const currentFollowers = followers[loggedUser.login.uuid]
-    followers[loggedUser.login.uuid] = currentFollowers.filter(uuid => uuid !== author.login.uuid)
-    localStorage.setItem('followers', JSON.stringify(followers))
+    const pendingRequests = requests[loggedUser.login.uuid] || []
+    const filteredRequests = pendingRequests.filter(uuid => uuid !== author.login.uuid)
+    requests[loggedUser.login.uuid] = filteredRequests
+    localStorage.setItem('requests', JSON.stringify(requests))
+
+    this.setState(previousState => ({
+      requests: previousState.requests.filter(authorRequest => authorRequest !== author.login.uuid)
+    }))
   }
 }
 

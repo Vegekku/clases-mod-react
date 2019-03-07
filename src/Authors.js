@@ -1,9 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
 import './App.css';
 
 import Showcase from './js/Showcase'
 import Author from './js/Author'
+import LoginContext from './LoginContext';
 
 // const AUTHORS = Array.from({length: 10}).map((_, index) => ({
 //   id: `author-${index}`,
@@ -15,6 +16,9 @@ class Authors extends React.Component {
   state = { authors: [], loading: false }
   async componentDidMount() {
     this.setState({ loading: true })
+    // if (!localStorage.getItem('user')) {
+    //   return this.setState({logged: true})
+    // }
     try {
       const response = await fetch(RANDOMUSERS)
       const {results} = await response.json()
@@ -29,6 +33,11 @@ class Authors extends React.Component {
   }
   render() {
     const {authors, loading, error} = this.state
+    const {logged} = this.props
+    // Queremos evitar controlar esto en cada componente, por eso lo hacemos en SocialWriters
+    // if (!logged) {
+    //   return <Redirect to='/login' />
+    // }
 
     if (loading) {
       return <p>Loading...</p>
@@ -39,12 +48,20 @@ class Authors extends React.Component {
     }
 
     return (
-      <Showcase keyFn={author => author.login.uuid} items={authors} render={author =>
-        <Link to={`/profile/${author.login.uuid}`} >
-          <Author details={author} />
-        </Link>
-      } />
-    );
+      <LoginContext.Consumer>
+        {
+          ({logged}) =>
+            logged
+            ? <Showcase keyFn={author => author.login.uuid} items={authors} render={author =>
+              <Link to={`/profile/${author.login.uuid}`} >
+                <Author details={author} />
+              </Link>
+            } />
+            : <Redirect to='/login' />
+        }
+      </LoginContext.Consumer>
+      
+    )
   }
 }
 

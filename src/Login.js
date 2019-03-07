@@ -1,4 +1,6 @@
 import React from 'react'
+import {Redirect} from 'react-router'
+import LoginContext from './LoginContext';
 
 const USERS_URL = 'https://randomuser.me/api?seed=abc&results=100'
 
@@ -75,7 +77,11 @@ export class Login extends React.Component {
 // import LoQueSea from 'Login'
 // pero siempre sin las llaves, por ser default
 export default props => 
-  <Login onSuccess={storeLogin} />
-
-const storeLogin = user =>
-  localStorage.setItem('user', JSON.stringify(user))
+  <LoginContext.Consumer>
+    {
+      ({login, logged}) =>
+        logged
+          ? <Redirect to='/' />
+          : <Login onSuccess={login} />
+    }
+  </LoginContext.Consumer>

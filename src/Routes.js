@@ -9,7 +9,10 @@ import Requests from './Requests'
 
 export default props =>
 <Switch>
-  <Route exact path="/" component={Authors} />
+  {/* component estaría creando un componente anónimo con Authors. Render renderiza directamente Author */}
+  {/* <Route exact path="/" component={() => <Authors logged={props.logged} />} /> */}
+  {/* <Route exact path="/" render={() => <Authors logged={props.logged} />} /> */}
+  <Route exact path="/" render={() => <Authors />} />
   <Route exact path="/login" component={Login} />
   <Route exact path="/profile" component={Profile} />
   <Route exact path="/profile/:uuid" component={AuthorProfile} />

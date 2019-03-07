@@ -9,7 +9,10 @@ import LoginContext from './LoginContext'
 // const {Provider} = LoginContext
 
 export default class extends React.Component {
-  state = {logged: Boolean(localStorage.getItem('user'))}
+  state = {
+    user: JSON.parse(localStorage.getItem('user')),
+    posts: JSON.parse(localStorage.getItem('posts')) || {}
+  }
   render () {
     // Esto crea una redirección continua, además hay partes de la aplicación que tienen que ser accesibles sin login, como el propio login
     // if (!logged) {
@@ -19,9 +22,12 @@ export default class extends React.Component {
       // <>
         // {/* Cualquier cosa que esté dentro de Provider tendrá acceso a Consumer */}
         <LoginContext.Provider value={{
-          logged: this.state.logged,
+          logged: Boolean(this.state.user),
+          user: this.state.user,
+          posts: this.state.posts,
           login: this.login,
-          logout: this.logout
+          logout: this.logout,
+          addPost: this.addPost
         }}>
           <Nav />
           <Routes />
@@ -33,20 +39,30 @@ export default class extends React.Component {
   }
   login = user => {
     localStorage.setItem('user', JSON.stringify(user))
-    this.setState({logged: true})
+    this.setState({user})
   }
   logout = () => {
-    this.setState({logged: false})
+    this.setState({user: null})
     localStorage.removeItem('user')
   }
+  addPost = post => {
+    post.date = new Date()
+    const previousState = this.state
+    const uuid = previousState.user.login.uuid
+    const nextState = {
+      ...previousState,
+      posts: {
+        ...previousState.posts,
+        [uuid]: [
+          post,
+          ...previousState.posts[uuid],
+        ]
+      }
+    }
+    this.setState(nextState)
+    localStorage.setItem(
+      'posts',
+      JSON.stringify(nextState.posts)
+    )
+  }
 }
-
-// export default props =>
-//   <>
-//     <Nav />
-//     <Routes />
-//   </>
-
-// Estas dos expresiones son equivalentes:
-// <> y <React.Fragment>
-// Pero solo React.Fragment puede tener props (por ejemplo key)

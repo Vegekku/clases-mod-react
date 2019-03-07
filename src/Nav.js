@@ -18,8 +18,10 @@ export default props =>
       </li>
       <LoginContext.Consumer>
         {
-          ({logout}) =>
-            <li className="menu__option" onClick={logout}>Logout</li>
+          ({logout, logged}) =>
+            logged
+              ? <li className="menu__option" onClick={logout}>Logout</li>
+              : null
         }
       </LoginContext.Consumer>
       

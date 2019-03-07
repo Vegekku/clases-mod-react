@@ -12,6 +12,7 @@ class AuthorProfile extends React.Component {
   }
   // igual que en Author.js, pero sin async-await
   componentDidMount() {
+    const loggedUser = JSON.parse(localStorage.getItem('user'))
     fetch(RANDOMUSERS)
       .then(response => response.json())
       .then(({results}) =>
@@ -19,12 +20,17 @@ class AuthorProfile extends React.Component {
           author.login.uuid === this.props.match.params.uuid
         )
       )
-      .then(details => this.setState({ details }))
+      .then(details => this.setState({ 
+        details,
+        posts: (JSON.parse(localStorage.getItem('posts')) || {})[details.login.uuid] || [],
+        following: ((JSON.parse(localStorage.getItem('followers')) || {})[details.login.uuid] || []).includes(loggedUser.login.uuid),
+        requested: ((JSON.parse(localStorage.getItem('requests')) || {})[details.login.uuid] || []).includes(loggedUser.login.uuid)
+       }))
       .catch(error => this.setState({errorLoading: error}))
       .finally(() => this.setState({loading: false}))
   }
   render() {
-    const {following, details, loading, errorLoading} = this.state
+    const {following, details, loading, errorLoading, posts, requested} = this.state
 
     if (loading) {
       return <p>Loading...</p>
@@ -38,14 +44,18 @@ class AuthorProfile extends React.Component {
       <div className='profile'>
         <Author details={{
           ...details,
-          posts: [],
+          posts,
           following,
         }}>
           {/* { this.props.match.params.uuid } */}
           <button onClick={() => this.props.history.goBack()}>Go back</button>
           {
-            !following &&
+            !following && !requested &&
               <button onClick={this.follow}>Suscribirse</button>
+          }
+          {
+            requested && !following &&
+              <p>{details.name.first} no te ha aceptado aun</p>
           }
         </Author>
       </div>
@@ -67,6 +77,7 @@ class AuthorProfile extends React.Component {
       'requests',
       JSON.stringify(requests)
     )
+    this.setState({requested: true})
   }
 }
   

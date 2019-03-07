@@ -36,7 +36,7 @@ class AuthorProfile extends React.Component {
           following,
         }}>
           {/* { this.props.match.params.uuid } */}
-          <button onClick={null}>Go back</button>
+          <button onClick={() => this.props.history.goBack()}>Go back</button>
           {
             !following &&
               <button onClick={this.follow}>Suscribirse</button>
@@ -46,7 +46,21 @@ class AuthorProfile extends React.Component {
     )
   }
   follow() {
+    // TODO Actualmente el usuario puede volver a suscribirse. Habría que controlar que solo se suscriba una vez, y renderizar algún mensaje tipo "esperando aceptación"
+    // TODO La duplicidad se controla aquí
     this.setState({following: true})
+    const loggedUser = JSON.parse(localStorage.getItem('user'))
+    const requests = JSON.parse(localStorage.getItem('requests')) || {}
+    const currentRequests = requests[this.state.details.login.uuid] || []
+    requests[this.state.details.login.uuid] = [
+      ...currentRequests,
+      loggedUser.login.uuid
+    ]
+    // en esta ocasión si puede quedarse aquí, porque solo se subscribe una vez
+    localStorage.setItem(
+      'requests',
+      JSON.stringify(requests)
+    )
   }
 }
   

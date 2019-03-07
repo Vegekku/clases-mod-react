@@ -4,46 +4,55 @@ import AddPost from './js/AddPost'
 
 import './css/Profile.css'
 
-const SAMPLE_AUTHOR = {
-  picture: {
-    large: 'https://randomuser.me/api/portraits/women/88.jpg'
-  },
-  name: {
-    first: 'Louane',
-    last: 'Vidal'
-  } 
-}
-
 class Profile extends React.Component {
-  state = {showingForm: false, posts: []}
-  constructor() {
-    super()
-    this.showForm = this.showForm.bind(this)
-    this.hideForm = this.hideForm.bind(this)
+  state = {showingForm: false, posts: [], loading: true}
+  componentDidMount () {
+    const details = JSON.parse(localStorage.getItem('user'))
+    // TODO esto falla, revisar su código
+    const posts = (JSON.parse(localStorage.getItem('posts')) || {})[details.login.uuid] || []
+
+    this.setState({
+      details,
+      posts,
+      loading: false
+    })
   }
   render() {
+    if (this.state.loading) {
+      return <p>Loading...</p>
+    }
     return (
       <div className='profile'>
         <Author details={{
-          ...SAMPLE_AUTHOR,
+          ...this.state.details,
           posts: this.state.posts,
           following: true
         }}>
           <button onClick={this.showForm}>Add post</button>
           {
-            this.state.showingForm && <AddPost onCancel={this.hideForm} onSubmit={this.addPost.bind(this)}/>
+            this.state.showingForm && <AddPost onCancel={this.hideForm} onSubmit={this.addPost}/>
           }
         </Author>
       </div>
     )
   }
-  showForm() {
+  componentDidUpdate (previousProps, previousState) {
+    // TODO esto falla, revisar su código
+    const posts = (JSON.parse(localStorage.getItem('posts')) || [])
+    posts[this.state.details.login.uuid] = this.state.posts
+    // localStorage.setItem(
+    //   'posts',
+    //   JSON.stringify(posts)
+    // )
+    // debugger
+  }
+  showForm = () => {
     this.setState({showingForm: true})
   }
-  hideForm() {
+  hideForm = () => {
     this.setState({showingForm: false})
   }
-  addPost(post) {
+  addPost = post => {
     post.date = new Date()
     this.setState(previousState => {
       return {
@@ -54,6 +63,11 @@ class Profile extends React.Component {
         ]
       }
     })
+    // esto siempre pisa los posts
+    // localStorage.setItem(
+    //   'posts',
+    //   JSON.stringify(post)
+    // )
     this.hideForm()
   }
 }

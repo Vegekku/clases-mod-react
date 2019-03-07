@@ -2,12 +2,14 @@ import React from 'react'
 
 const USERS_URL = 'https://randomuser.me/api?seed=abc&results=100'
 
-class Login extends React.Component {
+// se importaría por
+// import {Login} from 'Login'
+export class Login extends React.Component {
   state = {user: '', password: ''}
   render() {
     // terms no está en state, por lo que es undefined. Al renderizar se convierte a false
     // const {user, password, terms, error, hasChange, loginError} = this.state
-    const {user, password, error, hasChange, loginError} = this.state
+    const {user, password, error, hasChange, loginError, busy} = this.state
 
     return (
       <form onSubmit={this.login}>
@@ -23,7 +25,7 @@ class Login extends React.Component {
           Terms:&nbsp;
           <input name='terms' type='checkbox' value={terms} onChange={this.update} />
         </label> */}
-        <button type="submit" disabled={!hasChange}>Login</button>
+        <button type="submit" disabled={busy || !hasChange}>Login</button>
         {
           error && 
             <p>Usuario y contraseña requeridos</p>
@@ -53,18 +55,27 @@ class Login extends React.Component {
     if (user.trim().length === 0 || password.trim().length === 0) {
       return this.setState({error: true, hasChange: false})
     }
+    this.setState({busy: true})
     const response = await fetch(USERS_URL)
     const {results: users } = await response.json()
     const found = users.find(candidate =>
       candidate.login.username === user &&
       candidate.login.password === password
     )
+    this.setState({busy: false})
     if (!found) {
       return this.setState({loginError: true})
     }
-    this.props.onLogin(found)
+    this.props.onSuccess(found)
     // alert(JSON.stringify(found))
   }
 }
 
-export default Login
+// se usaría así, y contiene la lógica de la propia aplicación
+// import LoQueSea from 'Login'
+// pero siempre sin las llaves, por ser default
+export default props => 
+  <Login onSuccess={storeLogin} />
+
+const storeLogin = user =>
+  localStorage.setItem('user', JSON.stringify(user))

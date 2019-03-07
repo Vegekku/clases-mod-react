@@ -48,19 +48,11 @@ class Authors extends React.Component {
     }
 
     return (
-      <LoginContext.Consumer>
-        {
-          ({logged}) =>
-            logged
-            ? <Showcase keyFn={author => author.login.uuid} items={authors} render={author =>
-              <Link to={`/profile/${author.login.uuid}`} >
-                <Author details={author} />
-              </Link>
-            } />
-            : <Redirect to='/login' />
-        }
-      </LoginContext.Consumer>
-      
+      <Showcase keyFn={author => author.login.uuid} items={authors} render={author =>
+        <Link to={`/profile/${author.login.uuid}`} >
+          <Author details={author} />
+        </Link>
+      } />
     )
   }
 }

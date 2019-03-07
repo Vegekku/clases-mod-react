@@ -12,8 +12,7 @@ class Profile extends React.Component {
     return (
       <LoginContext.Consumer>
         {
-          ({logged, user, posts, addPost}) =>
-            logged &&
+          ({user, posts, addPost}) =>
               <div className='profile'>
                 <Author details={{
                   ...user,
@@ -32,7 +31,6 @@ class Profile extends React.Component {
                   }
                 </Author>
               </div>
-            || <Redirect to='/login' />
         }
       </LoginContext.Consumer>
     )

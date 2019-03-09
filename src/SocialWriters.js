@@ -65,4 +65,10 @@ export default class extends React.Component {
       JSON.stringify(nextState.posts)
     )
   }
+  componentDidUpdate() {
+    localStorage.setItem(
+      'SocialWriter',
+      JSON.stringify(this.state)
+    )
+  }
 }

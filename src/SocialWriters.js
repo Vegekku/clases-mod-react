@@ -27,7 +27,9 @@ export default class extends React.Component {
           posts: this.state.posts,
           login: this.login,
           logout: this.logout,
-          addPost: this.addPost
+          addPost: this.addPost,
+          findUsers: this.findUsers,
+          attemptLogin: this.attemptLogin
         }}>
           <Nav />
           <Routes />
@@ -37,9 +39,28 @@ export default class extends React.Component {
       // </>
     )
   }
-  login = user => {
+  findUsers = async () => {
+    const USERS_URL = 'https://randomuser.me/api?seed=abc&results=100'
+    const response = await fetch(USERS_URL)
+    const {results: users } = await response.json()
+    return users
+  }
+  attemptLogin = async ({user, password}) => {
+    const users = await this.findUsers()
+    const foundUser = users.find(candidate =>
+      candidate.login.username === user &&
+      candidate.login.password === password
+    )
+    return foundUser
+  }
+  login = async credentials => {
+    const user = await this.attemptLogin(credentials)
+    if (!user) {
+      throw new Error('No user found')
+    }
     localStorage.setItem('user', JSON.stringify(user))
     this.setState({user})
+    return user
   }
   logout = () => {
     this.setState({user: null})

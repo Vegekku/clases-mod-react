@@ -50,7 +50,13 @@ class Authors extends React.Component {
     return (
       <Showcase keyFn={author => author.login.uuid} items={authors} render={author =>
         <Link to={`/profile/${author.login.uuid}`} >
-          <Author details={author} />
+          <Author details={author}>
+            <button onClick={(event) => {
+              event.preventDefault()
+              // event.stopPropagation()
+              alert('hola');
+            }} >Saluda</button>
+          </Author>
         </Link>
       } />
     )

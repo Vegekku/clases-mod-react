@@ -8,6 +8,8 @@ import AuthorProfile from './AuthorProfile'
 import Requests from './Requests'
 import RequiresLogin from './requiresLogin';
 
+import Contador from './Contador'
+
 const requiresLogin = RequiresLogin('/login')
 
 export default () =>
@@ -20,5 +22,6 @@ export default () =>
   <Route exact path="/profile" component={requiresLogin(Profile)} />
   <Route exact path="/profile/:uuid" component={requiresLogin(AuthorProfile)} />
   <Route exact path="/subscribers" component={Requests} />
+  <Route exact path='/contador' component={Contador} />
   <Route component={props => <p>Error 404, no hemos encontrado lo que buscas</p>} />
 </Switch>
